@@ -1,5 +1,12 @@
 {
+    "version": 2,
     "alias": [
         "game-client"
+    ],
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@now/next"
+        }
     ]
 }

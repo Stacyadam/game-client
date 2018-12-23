@@ -1,5 +1,4 @@
-import React, { Component } from 'react'
-import Router from 'next/router'
+import { Component } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
@@ -22,21 +21,19 @@ const Loading = styled.div`
   border-top: 2px solid transparent;
   animation: ${rotate} 2s linear infinite;
 `
-
 const Background = styled.div`
   box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #ccc;
-  background-image: url('https://i.pinimg.com/originals/96/f7/33/96f733006534aa2da5b48aeaa24aa5a4.jpg');
+  background-image: url('https://66.media.tumblr.com/69f4a64c7f07582f0fb42e46e6802ab3/tumblr_no12mldqQO1u3jedmo1_1280.jpg');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
   height: 100vh;
   width: 100vw;
 `
-
 const LoginCard = styled.form`
   box-sizing: border-box;
   display: flex;
@@ -78,50 +75,62 @@ const LoginCard = styled.form`
   }
 `
 
-export default class Login extends Component {
+class Signup extends Component {
   state = {
     username: '',
+    email: '',
     password: ''
   }
-
   handleChange = e => {
     this.setState({
       [e.target.name]: e.target.value
     })
   }
   render() {
-    const { username, password } = this.state
+    const { username, email, password } = this.state
     return (
       <Background>
         <Mutation
           mutation={gql`
-            mutation signIn($login: String!, $password: String!) {
-              signIn(login: $login, password: $password) {
+            mutation signUp(
+              $username: String!
+              $email: String!
+              $password: String!
+            ) {
+              signUp(username: $username, email: $email, password: $password) {
                 token
               }
             }
           `}
           onCompleted={() => Router.push('/dashboard')}
         >
-          {(signIn, { loading, error, data }) => {
+          {(signUp, { loading, error, data }) => {
             return (
               <LoginCard
-                error={error}
                 onSubmit={e => {
                   e.preventDefault()
-                  signIn({ variables: { login: username, password } })
+                  signUp({ variables: { username, email, password } })
                 }}
               >
                 <input
-                  name="username"
                   type="text"
+                  name="username"
                   placeholder="Username"
+                  value={username}
                   onChange={this.handleChange}
                 />
                 <input
-                  name="password"
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={this.handleChange}
+                />
+                <input
                   type="password"
+                  name="password"
                   placeholder="Password"
+                  value={password}
                   onChange={this.handleChange}
                 />
                 {error ? <p>{error.message}</p> : null}
@@ -134,3 +143,5 @@ export default class Login extends Component {
     )
   }
 }
+
+export default Signup
