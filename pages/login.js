@@ -89,24 +89,19 @@ export default class Login extends Component {
       [e.target.name]: e.target.value
     })
   }
-  login = e => {
-    e.preventDefault()
-    if (this.state.username.length > 0 && this.state.password.length > 0) {
-      Router.push('/dashboard')
-    }
-  }
   render() {
     const { username, password } = this.state
     return (
       <Background>
         <Mutation
           mutation={gql`
-            mutation singIn($login: String!, $password: String!) {
+            mutation signIn($login: String!, $password: String!) {
               signIn(login: $login, password: $password) {
                 token
               }
             }
           `}
+          onCompleted={() => Router.push('/game')}
         >
           {(signIn, { loading, error, data }) => {
             return (
@@ -114,7 +109,7 @@ export default class Login extends Component {
                 error={error}
                 onSubmit={e => {
                   e.preventDefault()
-                  signIn({ login: username, password: password })
+                  signIn({ variables: { login: username, password } })
                 }}
               >
                 <input

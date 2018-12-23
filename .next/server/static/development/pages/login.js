@@ -118,7 +118,7 @@ var _jsxFileName = "/Users/wol4005/Code/game-client/pages/login.js";
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _templateObject2() {
-  var data = _taggedTemplateLiteral(["\n            mutation singIn($login: String!, $password: String!) {\n              signIn(login: $login, password: $password) {\n                token\n              }\n            }\n          "]);
+  var data = _taggedTemplateLiteral(["\n            mutation signIn($login: String!, $password: String!) {\n              signIn(login: $login, password: $password) {\n                token\n              }\n            }\n          "]);
 
   _templateObject2 = function _templateObject2() {
     return data;
@@ -205,14 +205,6 @@ function (_Component) {
       _this.setState(_defineProperty({}, e.target.name, e.target.value));
     });
 
-    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "login", function (e) {
-      e.preventDefault();
-
-      if (_this.state.username.length > 0 && _this.state.password.length > 0) {
-        next_router__WEBPACK_IMPORTED_MODULE_1___default.a.push('/dashboard');
-      }
-    });
-
     return _this;
   }
 
@@ -227,14 +219,17 @@ function (_Component) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Background, {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 101
+          lineNumber: 95
         },
         __self: this
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_apollo__WEBPACK_IMPORTED_MODULE_3__["Mutation"], {
         mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_4___default()(_templateObject2()),
+        onCompleted: function onCompleted() {
+          return next_router__WEBPACK_IMPORTED_MODULE_1___default.a.push('/game');
+        },
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 102
+          lineNumber: 96
         },
         __self: this
       }, function (signIn, _ref) {
@@ -246,13 +241,15 @@ function (_Component) {
           onSubmit: function onSubmit(e) {
             e.preventDefault();
             signIn({
-              login: username,
-              password: password
+              variables: {
+                login: username,
+                password: password
+              }
             });
           },
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 113
+            lineNumber: 108
           },
           __self: this
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -262,7 +259,7 @@ function (_Component) {
           onChange: _this2.handleChange,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 120
+            lineNumber: 115
           },
           __self: this
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -272,25 +269,25 @@ function (_Component) {
           onChange: _this2.handleChange,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 126
+            lineNumber: 121
           },
           __self: this
         }), error ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 132
+            lineNumber: 127
           },
           __self: this
         }, error.message) : null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 133
+            lineNumber: 128
           },
           __self: this
         }, loading ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Loading, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 133
+            lineNumber: 128
           },
           __self: this
         }) : 'Login'));
