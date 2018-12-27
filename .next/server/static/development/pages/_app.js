@@ -125,10 +125,10 @@ var GlobalStyle = Object(styled_components__WEBPACK_IMPORTED_MODULE_0__["createG
 
 /***/ }),
 
-/***/ "./lib/init-apollo.js":
-/*!****************************!*\
-  !*** ./lib/init-apollo.js ***!
-  \****************************/
+/***/ "./lib/initApollo.js":
+/*!***************************!*\
+  !*** ./lib/initApollo.js ***!
+  \***************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -137,42 +137,61 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return initApollo; });
 /* harmony import */ var apollo_boost__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! apollo-boost */ "apollo-boost");
 /* harmony import */ var apollo_boost__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(apollo_boost__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! isomorphic-unfetch */ "isomorphic-unfetch");
-/* harmony import */ var isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var apollo_link_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! apollo-link-http */ "apollo-link-http");
+/* harmony import */ var apollo_link_http__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(apollo_link_http__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var apollo_link_context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! apollo-link-context */ "apollo-link-context");
+/* harmony import */ var apollo_link_context__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(apollo_link_context__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! isomorphic-unfetch */ "isomorphic-unfetch");
+/* harmony import */ var isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_3__);
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
 
 
 var apolloClient = null; // Polyfill fetch() on the server (used by apollo-client)
 
 if (true) {
-  global.fetch = isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_1___default.a;
+  global.fetch = isomorphic_unfetch__WEBPACK_IMPORTED_MODULE_3___default.a;
 }
 
-function create(initialState) {
-  // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
+function create(initialState, _ref) {
+  var getToken = _ref.getToken;
+  var httpLink = Object(apollo_link_http__WEBPACK_IMPORTED_MODULE_1__["createHttpLink"])({
+    uri: 'https://cyw-game.herokuapp.com/graphql',
+    credentials: 'same-origin'
+  });
+  var authLink = Object(apollo_link_context__WEBPACK_IMPORTED_MODULE_2__["setContext"])(function (_, _ref2) {
+    var headers = _ref2.headers;
+    var token = getToken();
+    return {
+      headers: _objectSpread({}, headers, {
+        authorization: token ? "Bearer ".concat(token) : ''
+      })
+    };
+  }); // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
+
   return new apollo_boost__WEBPACK_IMPORTED_MODULE_0__["ApolloClient"]({
     connectToDevTools: false,
     ssrMode: !false,
     // Disables forceFetch on the server (so queries are only run once)
-    link: new apollo_boost__WEBPACK_IMPORTED_MODULE_0__["HttpLink"]({
-      uri: 'https://cyw-game.herokuapp.com/graphql',
-      // Server URL (must be absolute)
-      credentials: 'same-origin' // Additional fetch() options like `credentials` or `headers`
-
-    }),
+    link: authLink.concat(httpLink),
     cache: new apollo_boost__WEBPACK_IMPORTED_MODULE_0__["InMemoryCache"]().restore(initialState || {})
   });
 }
 
-function initApollo(initialState) {
+function initApollo(initialState, options) {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (true) {
-    return create(initialState);
+    return create(initialState, options);
   } // Reuse client on the client-side
 
 
   if (!apolloClient) {
-    apolloClient = create(initialState);
+    apolloClient = create(initialState, options);
   }
 
   return apolloClient;
@@ -180,10 +199,10 @@ function initApollo(initialState) {
 
 /***/ }),
 
-/***/ "./lib/with-apollo-client.js":
-/*!***********************************!*\
-  !*** ./lib/with-apollo-client.js ***!
-  \***********************************/
+/***/ "./lib/withApollo.js":
+/*!***************************!*\
+  !*** ./lib/withApollo.js ***!
+  \***************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -193,13 +212,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _init_apollo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./init-apollo */ "./lib/init-apollo.js");
-/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! next/head */ "next/head");
-/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(next_head__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var cookie__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! cookie */ "cookie");
+/* harmony import */ var cookie__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(cookie__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! prop-types */ "prop-types");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var react_apollo__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-apollo */ "react-apollo");
 /* harmony import */ var react_apollo__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_apollo__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! next/head */ "next/head");
+/* harmony import */ var next_head__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(next_head__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _initApollo__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./initApollo */ "./lib/initApollo.js");
 
-var _jsxFileName = "/Users/wol4005/Code/game-client/lib/with-apollo-client.js";
+var _jsxFileName = "/Users/wol4005/Code/game-client/lib/withApollo.js";
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -233,89 +256,108 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
+
+
+function parseCookies(req) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  return cookie__WEBPACK_IMPORTED_MODULE_2___default.a.parse(req ? req.headers.cookie || '' : document.cookie, options);
+}
+
 /* harmony default export */ __webpack_exports__["default"] = (function (App) {
   var _class, _temp;
 
   return _temp = _class =
   /*#__PURE__*/
   function (_React$Component) {
-    _inherits(Apollo, _React$Component);
+    _inherits(WithData, _React$Component);
 
-    _createClass(Apollo, null, [{
+    _createClass(WithData, null, [{
       key: "getInitialProps",
       value: function () {
         var _getInitialProps = _asyncToGenerator(
         /*#__PURE__*/
         _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(ctx) {
-          var Component, router, appProps, apollo, apolloState;
+          var Component, router, _ctx$ctx, req, res, apollo, appProps, apolloState;
+
           return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
             while (1) {
               switch (_context.prev = _context.next) {
                 case 0:
-                  Component = ctx.Component, router = ctx.router;
+                  Component = ctx.Component, router = ctx.router, _ctx$ctx = ctx.ctx, req = _ctx$ctx.req, res = _ctx$ctx.res;
+                  apollo = Object(_initApollo__WEBPACK_IMPORTED_MODULE_6__["default"])({}, {
+                    getToken: function getToken() {
+                      return parseCookies(req).token;
+                    }
+                  });
+                  ctx.ctx.apolloClient = apollo;
                   appProps = {};
 
                   if (!App.getInitialProps) {
-                    _context.next = 6;
+                    _context.next = 8;
                     break;
                   }
 
-                  _context.next = 5;
+                  _context.next = 7;
                   return App.getInitialProps(ctx);
 
-                case 5:
+                case 7:
                   appProps = _context.sent;
 
-                case 6:
-                  // Run all GraphQL queries in the component tree
-                  // and extract the resulting data
-                  apollo = Object(_init_apollo__WEBPACK_IMPORTED_MODULE_2__["default"])();
+                case 8:
+                  if (!(res && res.finished)) {
+                    _context.next = 10;
+                    break;
+                  }
 
+                  return _context.abrupt("return", {});
+
+                case 10:
                   if (false) {}
 
-                  _context.prev = 8;
-                  _context.next = 11;
+                  _context.prev = 11;
+                  _context.next = 14;
                   return Object(react_apollo__WEBPACK_IMPORTED_MODULE_4__["getDataFromTree"])(react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(App, _extends({}, appProps, {
                     Component: Component,
                     router: router,
                     apolloClient: apollo,
                     __source: {
                       fileName: _jsxFileName,
-                      lineNumber: 24
+                      lineNumber: 52
                     },
                     __self: this
                   })));
 
-                case 11:
-                  _context.next = 16;
+                case 14:
+                  _context.next = 19;
                   break;
 
-                case 13:
-                  _context.prev = 13;
-                  _context.t0 = _context["catch"](8);
+                case 16:
+                  _context.prev = 16;
+                  _context.t0 = _context["catch"](11);
                   // Prevent Apollo Client GraphQL errors from crashing SSR.
                   // Handle them in components via the data.error prop:
                   // https://www.apollographql.com/docs/react/api/react-apollo.html#graphql-query-data-error
                   console.error('Error while running `getDataFromTree`', _context.t0);
 
-                case 16:
+                case 19:
                   // getDataFromTree does not call componentWillUnmount
                   // head side effect therefore need to be cleared manually
-                  next_head__WEBPACK_IMPORTED_MODULE_3___default.a.rewind();
+                  next_head__WEBPACK_IMPORTED_MODULE_5___default.a.rewind();
 
-                case 17:
-                  // Extract query data from the Apollo store
+                case 20:
+                  // Extract query data from the Apollo's store
                   apolloState = apollo.cache.extract();
                   return _context.abrupt("return", _objectSpread({}, appProps, {
                     apolloState: apolloState
                   }));
 
-                case 19:
+                case 22:
                 case "end":
                   return _context.stop();
               }
             }
-          }, _callee, this, [[8, 13]]);
+          }, _callee, this, [[11, 16]]);
         }));
 
         return function getInitialProps(_x) {
@@ -324,32 +366,40 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }()
     }]);
 
-    function Apollo(props) {
+    function WithData(props) {
       var _this;
 
-      _classCallCheck(this, Apollo);
+      _classCallCheck(this, WithData);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Apollo).call(this, props));
-      _this.apolloClient = Object(_init_apollo__WEBPACK_IMPORTED_MODULE_2__["default"])(props.apolloState);
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(WithData).call(this, props)); // `getDataFromTree` renders the component first, the client is passed off as a property.
+      // After that rendering is done using Next's normal rendering pipeline
+
+      _this.apolloClient = Object(_initApollo__WEBPACK_IMPORTED_MODULE_6__["default"])(props.apolloState, {
+        getToken: function getToken() {
+          return parseCookies().token;
+        }
+      });
       return _this;
     }
 
-    _createClass(Apollo, [{
+    _createClass(WithData, [{
       key: "render",
       value: function render() {
         return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(App, _extends({}, this.props, {
           apolloClient: this.apolloClient,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 58
+            lineNumber: 92
           },
           __self: this
         }));
       }
     }]);
 
-    return Apollo;
-  }(react__WEBPACK_IMPORTED_MODULE_1___default.a.Component), _defineProperty(_class, "displayName", 'withApollo(App)'), _temp;
+    return WithData;
+  }(react__WEBPACK_IMPORTED_MODULE_1___default.a.Component), _defineProperty(_class, "displayName", "WithData(".concat(App.displayName, ")")), _defineProperty(_class, "propTypes", {
+    apolloState: prop_types__WEBPACK_IMPORTED_MODULE_3___default.a.object.isRequired
+  }), _temp;
 });
 
 /***/ }),
@@ -367,7 +417,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var next_app__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(next_app__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _lib_with_apollo_client__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../lib/with-apollo-client */ "./lib/with-apollo-client.js");
+/* harmony import */ var _lib_withApollo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../lib/withApollo */ "./lib/withApollo.js");
 /* harmony import */ var react_apollo__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-apollo */ "react-apollo");
 /* harmony import */ var react_apollo__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_apollo__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _components_GlobalStyles__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/GlobalStyles */ "./components/GlobalStyles.js");
@@ -449,7 +499,7 @@ function (_App) {
   return MyApp;
 }(next_app__WEBPACK_IMPORTED_MODULE_0___default.a);
 
-/* harmony default export */ __webpack_exports__["default"] = (Object(_lib_with_apollo_client__WEBPACK_IMPORTED_MODULE_2__["default"])(MyApp));
+/* harmony default export */ __webpack_exports__["default"] = (Object(_lib_withApollo__WEBPACK_IMPORTED_MODULE_2__["default"])(MyApp));
 
 /***/ }),
 
@@ -484,6 +534,39 @@ module.exports = require("@babel/runtime/regenerator");
 /***/ (function(module, exports) {
 
 module.exports = require("apollo-boost");
+
+/***/ }),
+
+/***/ "apollo-link-context":
+/*!**************************************!*\
+  !*** external "apollo-link-context" ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("apollo-link-context");
+
+/***/ }),
+
+/***/ "apollo-link-http":
+/*!***********************************!*\
+  !*** external "apollo-link-http" ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("apollo-link-http");
+
+/***/ }),
+
+/***/ "cookie":
+/*!*************************!*\
+  !*** external "cookie" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("cookie");
 
 /***/ }),
 
@@ -528,6 +611,17 @@ module.exports = require("next/head");
 /***/ (function(module, exports) {
 
 module.exports = require("polished");
+
+/***/ }),
+
+/***/ "prop-types":
+/*!*****************************!*\
+  !*** external "prop-types" ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("prop-types");
 
 /***/ }),
 
