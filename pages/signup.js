@@ -103,7 +103,8 @@ class Signup extends Component {
               }
             }
           `}
-          onCompleted={() => {
+          variables={this.state}
+          onCompleted={({ signIn }) => {
             localStorage.setItem('token', signIn.token)
             Router.push('/dashboard')
             client.writeData({ data: { isLoggedIn: true } })
@@ -114,7 +115,7 @@ class Signup extends Component {
               <LoginCard
                 onSubmit={e => {
                   e.preventDefault()
-                  signUp({ variables: { username, email, password } })
+                  signUp()
                 }}
               >
                 <input
