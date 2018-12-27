@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Router from 'next/router'
 import styled, { keyframes } from 'styled-components'
-import { Mutation } from 'react-apollo'
+import { Mutation, ApolloConsumer } from 'react-apollo'
 import gql from 'graphql-tag'
 
 const rotate = keyframes`
@@ -93,43 +93,51 @@ export default class Login extends Component {
     const { username, password } = this.state
     return (
       <Background>
-        <Mutation
-          mutation={gql`
-            mutation signIn($login: String!, $password: String!) {
-              signIn(login: $login, password: $password) {
-                token
-              }
-            }
-          `}
-          onCompleted={() => Router.push('/dashboard')}
-        >
-          {(signIn, { loading, error, data }) => {
-            return (
-              <LoginCard
-                error={error}
-                onSubmit={e => {
-                  e.preventDefault()
-                  signIn({ variables: { login: username, password } })
-                }}
-              >
-                <input
-                  name="username"
-                  type="text"
-                  placeholder="Username"
-                  onChange={this.handleChange}
-                />
-                <input
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  onChange={this.handleChange}
-                />
-                {error ? <p>{error.message}</p> : null}
-                <button>{loading ? <Loading /> : 'Login'}</button>
-              </LoginCard>
-            )
-          }}
-        </Mutation>
+        <ApolloConsumer>
+          {client => (
+            <Mutation
+              mutation={gql`
+                mutation signIn($login: String!, $password: String!) {
+                  signIn(login: $login, password: $password) {
+                    token
+                  }
+                }
+              `}
+              onCompleted={({ signIn }) => {
+                localStorage.setItem('token', signIn.token)
+                Router.push('/dashboard')
+                client.writeData({ data: { isLoggedIn: true } })
+              }}
+            >
+              {(signIn, { loading, error, data }) => {
+                return (
+                  <LoginCard
+                    error={error}
+                    onSubmit={e => {
+                      e.preventDefault()
+                      signIn({ variables: { login: username, password } })
+                    }}
+                  >
+                    <input
+                      name="username"
+                      type="text"
+                      placeholder="Username"
+                      onChange={this.handleChange}
+                    />
+                    <input
+                      name="password"
+                      type="password"
+                      placeholder="Password"
+                      onChange={this.handleChange}
+                    />
+                    {error ? <p>{error.message}</p> : null}
+                    <button>{loading ? <Loading /> : 'Login'}</button>
+                  </LoginCard>
+                )
+              }}
+            </Mutation>
+          )}
+        </ApolloConsumer>
       </Background>
     )
   }

@@ -1,7 +1,8 @@
 import { Component } from 'react'
 import styled, { keyframes } from 'styled-components'
-import { Mutation } from 'react-apollo'
+import { Mutation, ApolloConsumer } from 'react-apollo'
 import gql from 'graphql-tag'
+import { ApolloClient } from 'apollo-boost'
 
 const rotate = keyframes`
   from {
@@ -102,7 +103,11 @@ class Signup extends Component {
               }
             }
           `}
-          onCompleted={() => Router.push('/dashboard')}
+          onCompleted={() => {
+            localStorage.setItem('token', signIn.token)
+            Router.push('/dashboard')
+            client.writeData({ data: { isLoggedIn: true } })
+          }}
         >
           {(signUp, { loading, error, data }) => {
             return (
