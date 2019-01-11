@@ -4,6 +4,7 @@ import gql from 'graphql-tag'
 import { LoginCard } from './styles'
 import { Background } from '../../shared/Background'
 import { Loading } from '../../shared/Spinner'
+import { Router } from 'next/router'
 
 class Signup extends Component {
   state = {
@@ -19,7 +20,7 @@ class Signup extends Component {
   render() {
     const { username, email, password } = this.state
     return (
-      <Background src="https://66.media.tumblr.com/69f4a64c7f07582f0fb42e46e6802ab3/tumblr_no12mldqQO1u3jedmo1_1280.jpg">
+      <Background src='https://66.media.tumblr.com/69f4a64c7f07582f0fb42e46e6802ab3/tumblr_no12mldqQO1u3jedmo1_1280.jpg'>
         <Mutation
           mutation={gql`
             mutation signUp(
@@ -43,23 +44,23 @@ class Signup extends Component {
                 }}
               >
                 <input
-                  type="text"
-                  name="username"
-                  placeholder="Username"
+                  type='text'
+                  name='username'
+                  placeholder='Username'
                   value={username}
                   onChange={this.handleChange}
                 />
                 <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
+                  type='email'
+                  name='email'
+                  placeholder='Email'
                   value={email}
                   onChange={this.handleChange}
                 />
                 <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
+                  type='password'
+                  name='password'
+                  placeholder='Password'
                   value={password}
                   onChange={this.handleChange}
                 />
