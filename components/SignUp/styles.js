@@ -8,7 +8,6 @@ export const LoginCard = styled.form`
   flex-direction: column;
   padding: 40px;
   width: 450px;
-  height: 300px;
   background: white;
   input {
     box-sizing: border-box;

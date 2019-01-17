@@ -1,6 +1,10 @@
+import React, { Component } from 'react'
 import styled from 'styled-components'
+import { Query } from 'react-apollo'
+import gql from 'graphql-tag'
+import jwtDecode from 'jwt-decode'
 
-const Header = styled.div`
+const Bar = styled.div`
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
@@ -19,15 +23,36 @@ const Header = styled.div`
       height: 50px;
       margin-right: 10px;
     }
+    p {
+      text-transform: uppercase;
+    }
   }
 `
 
-export default () => (
-  <Header>
-    <h1>Game</h1>
-    <div>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/User_Avatar_2.png" />
-      <p>CarrionDude</p>
-    </div>
-  </Header>
-)
+class Header extends Component {
+  state = {
+    user: {}
+  }
+  componentDidMount() {
+    this.getToken()
+  }
+  getToken() {
+    this.setState({
+      user: jwtDecode(localStorage.getItem('token'))
+    })
+  }
+  render() {
+    const { user } = this.state
+    return (
+      <Bar>
+        <h1>Game</h1>
+        <div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/User_Avatar_2.png" />
+          <p>{user.username}</p>
+        </div>
+      </Bar>
+    )
+  }
+}
+
+export default Header

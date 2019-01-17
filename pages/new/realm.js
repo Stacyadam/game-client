@@ -13,14 +13,15 @@ const RealmCard = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 33.3vw;
+  width: 100%;
   height: 90vh;
-  padding: 40px;
+  flex: 1;
   background-image: url(${props => props.background});
   background-position: center;
   background-size: cover;
   color: white;
   border: none;
+  padding: 0;
   &:hover {
     cursor: pointer;
     opacity: 0.8;
