@@ -5,8 +5,9 @@
 1. `git clone https://github.com/Caryyon/game-client.git`
 2. `cd game-client`
 3. `npm install`
-4. `npm start`
-5. play!!!!
+4. `next build`
+5. `npm start`
+6. play!!!!
 
 ## The idea
 The idea for this game just came out of the want to play something slower, constant, and awesome.
